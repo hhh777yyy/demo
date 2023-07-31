@@ -1,5 +1,7 @@
 package com.example.demo;
 
+import com.sun.jmx.remote.internal.ArrayQueue;
+
 import java.util.*;
 
 public class TreeAlgorithm {
@@ -247,6 +249,181 @@ public class TreeAlgorithm {
         return leftCount + rightCount + 1;
     }
 
+    /**
+     * 给定一个二叉树，判断它是否是高度平衡的二叉树。
+     *
+     * 本题中，一棵高度平衡二叉树定义为：一个二叉树【每个节点】 的左右两个子树的高度差的绝对值不超过1。
+     *
+     * 中左右     左右中
+     */
+    public static boolean isBalanced(TreeNode root) {
+        if (root == null) {
+            return true;
+        }
+        boolean leftBalanced = isBalanced(root.left);
+        boolean rightBalanced = isBalanced(root.right);
+        if (leftBalanced==false || rightBalanced==false) {
+            return false;
+        }
+        // 左子树高度
+        int leftHigh = high(root.left);
+        // 右子树高度
+        int rightHigh = high(root.right);
+        int highGap = leftHigh - rightHigh >= 0 ? leftHigh - rightHigh : rightHigh - leftHigh;
+        if (highGap > 1) {
+            return false;
+        }
+
+        return true;
+
+        // return true/false
+        // if 任意false，即false
+    }
+
+    public static int high(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        int leftHigh = high(root.left);
+        int rightHigh = high(root.right);
+        return Math.max(leftHigh, rightHigh) + 1;
+    }
+
+    /**
+     * 给定一个二叉树，返回所有从根节点到叶子节点的路径。
+     */
+    public static List<String> binaryTreePaths(TreeNode root) {
+        List<String> pathElementList = new ArrayList<>();
+        List<String> resList = new ArrayList<>();
+        binaryTreePaths(root, pathElementList, resList);
+        return resList;
+    }
+
+    public static void binaryTreePaths(TreeNode root, List<String> pathElementList, List<String> resList) {
+        if (root == null) {
+
+            return;
+        }
+        // 放进pathElement
+        pathElementList.add(String.valueOf(root.val));
+
+        binaryTreePaths(root.left, pathElementList, resList);
+        if (root.left == null && root.right == null) {
+            resList.add(String.join("->", pathElementList));
+            pathElementList.remove(pathElementList.size() - 1);
+            return;
+        }
+
+
+        binaryTreePaths(root.right, pathElementList, resList);
+        pathElementList.remove(pathElementList.size() - 1);
+
+    }
+
+    /**
+     * 计算给定二叉树的所有左叶子之和。
+     */
+    public static int sumOfLeftLeaves(TreeNode root) {
+        List<Integer> leftList = new ArrayList<>();
+        sumOfLeftLeaves(root, leftList);
+        int sum = 0;
+        for (Integer value : leftList) {
+            sum = sum + value;
+        }
+        return sum;
+    }
+
+
+    public static void sumOfLeftLeaves(TreeNode root, List<Integer> leftList) {
+        // root非空才递归
+        if (root.left == null && root.right == null) {
+            leftList.add(root.val);
+        }
+        if (root.left != null) {
+            sumOfLeftLeaves(root.left, leftList);
+        }
+//        if (root.left == null && root.right == null) {
+//            leftList.add(root.val);
+//        }
+        if (root.right != null) {
+            sumOfLeftLeaves(root.right, leftList);
+        }
+    }
+
+    /**
+     * 层序遍历
+     */
+    public static List<List<Integer>> get(TreeNode root) {
+        if (root == null) {
+            return new ArrayList<>();
+        }
+        List<List<Integer>> resultList = new ArrayList<>();
+        ArrayDeque<TreeNode> currentQueue = new ArrayDeque<>();
+        ArrayDeque<TreeNode> nextQueue = new ArrayDeque<>();
+
+        currentQueue.offer(root);
+        List<Integer> levelList = new ArrayList<>();
+        while (!currentQueue.isEmpty()) {
+            TreeNode pollNode = currentQueue.poll();
+            levelList.add(pollNode.val);
+            if (pollNode.left != null) {
+                nextQueue.offer(pollNode.left);
+            }
+            if (pollNode.right != null) {
+                nextQueue.offer(pollNode.right);
+            }
+            if (currentQueue.isEmpty()) {
+                resultList.add(levelList);
+                levelList = new ArrayList<>();
+                currentQueue = nextQueue;
+                nextQueue = new ArrayDeque<>();
+            }
+        }
+        return resultList;
+    }
+
+    /**
+     * 16.给定一个二叉树，在树的最后一行找到最左边的值。
+     */
+//    public static int findBottomLeftValue(TreeNode root) {
+//
+//    }
+
+    /**
+     * 给定一个二叉树和一个目标和，判断该树中是否存在根节点到叶子节点的路径，这条路径上所有节点值相加等于目标和。
+     *
+     * 说明: 叶子节点是指没有子节点的节点。
+     *
+     * 示例: 给定如下二叉树，以及目标和 sum = 22，
+     */
+
+
+    /**
+     * 根据一棵树的中序遍历与后序遍历构造二叉树。
+     *
+     * 注意: 你可以假设树中没有重复的元素。
+     *
+     * 例如，给出
+     *
+     * 中序遍历 inorder = [9,3,15,20,7]
+     * 后序遍历 postorder = [9,15,7,20,3] 返回如下的二叉树：
+     */
+
+    /**
+     * 给定一个不含重复元素的整数数组。一个以此数组构建的最大二叉树定义如下：
+     *
+     * 二叉树的根是数组中的最大元素。
+     * 左子树是通过数组中最大值左边部分构造出的最大二叉树。
+     * 右子树是通过数组中最大值右边部分构造出的最大二叉树。
+     * 通过给定的数组构建最大二叉树，并且输出这个树的根节点。
+     */
+
+    /**
+     * 给定两个二叉树，想象当你将它们中的一个覆盖到另一个上时，两个二叉树的一些节点便会重叠。
+     *
+     * 你需要将他们合并为一个新的二叉树。合并的规则是如果两个节点重叠，那么将他们的值相加作为节点合并后的新值，否则不为 NULL 的节点将直接作为新二叉树的节点。
+     */
+
 
 
 
@@ -291,11 +468,11 @@ public class TreeAlgorithm {
 
 
     public static void main(String[] args) {
-        TreeNode root = createTree(5, 4, 6);
-        root.left.left = new TreeNode(1);
-        root.left.right = new TreeNode(2);
-        root.right.left = new TreeNode(7);
-        root.right.right = new TreeNode(8);
+//        TreeNode root = createTree(5, 4, 6);
+//        root.left.left = new TreeNode(1);
+//        root.left.right = new TreeNode(2);
+//        root.right.left = new TreeNode(7);
+//        root.right.right = new TreeNode(8);
 //        List<Integer> integers = preorderTraversal(root);
 //        List<Integer> integers1 = inorderTraversal(root);
 //        List<Integer> integers2 = postorderTraversal(root);
@@ -308,9 +485,13 @@ public class TreeAlgorithm {
 
 //        TreeNode rootNode = createTree(new Integer[]{5,4,1,null,1,null,4,2,null,2,null});
 //        []
-        TreeNode rootNode = createTree(new Integer[]{2,null,3,null,4,null,5,null,6});
-        boolean symmetric = isSymmetric(rootNode);
-        int i = minDepth(rootNode);
+        TreeNode rootNode = createTree(new Integer[]{3,9,20,null,null,15,7});
+//        boolean symmetric = isSymmetric(rootNode);
+//        int i = minDepth(rootNode);
+//        boolean balanced = isBalanced(rootNode);
+//        List<String> strings = binaryTreePaths(rootNode);
+//        int i = sumOfLeftLeaves(rootNode);
+        List<List<Integer>> lists = get(rootNode);
         System.out.println();
     }
 }
